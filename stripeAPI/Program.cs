@@ -1,10 +1,14 @@
+using Microsoft.EntityFrameworkCore;
 using Stripe;
+using stripeAPI.Data;
 
 StripeConfiguration.ApiKey = "sk_test_51SozweBGVLvLSIXthLPOpORMUsATAcxYBoFPObwOuPThkKP90Q13y37cM9M3rO7ffnqwENAGOkgXfZ6j3H1s57CA00Hzseaaux";
 
 
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlite("Data Source=orders.db"));  //database sqlite
 
 // Add services to the container.
 
