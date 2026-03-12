@@ -1,0 +1,82 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Stripe webshop test</title>
+
+    <style>
+        body {
+            font-family: Arial;
+            background: #f5f5f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .product-card {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0px 5px 15px rgba(0,0,0,0.1);
+            text-align: center;
+            width: 300px;
+        }
+
+        .price {
+            font-size: 24px;
+            color: #2ecc71;
+            margin: 10px 0;
+        }
+
+        button {
+            background: #635bff;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            font-size: 16px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+            button:hover {
+                background: #4b45c6;
+            }
+    </style>
+
+</head>
+<body>
+
+    <div class="product-card">
+        <h2>Test Produkt</h2>
+
+        <p>Dette er et testprodukt til Stripe betaling.</p>
+
+        <div class="price">20,00 DKK</div>
+
+        <button id="pay">Betal nu</button>
+    </div>
+
+    <script src="https://js.stripe.com/v3/"></script>
+
+    <script>
+
+        const stripe = Stripe("pk_test_51SozweBGVLvLSIXtqXXWoMMZhYR8fCkjLJF8WdP3C9eHewlBVdJnw6HxX6W5NVPTMTRdxm69XJmQPWFE4kZum3Pp00dny4moi4");
+
+        document.getElementById("pay").onclick = async () => {
+
+            const res = await fetch("/api/payments/create-checkout-session", {
+                method: "POST"
+            });
+
+            const data = await res.json();
+
+            await stripe.redirectToCheckout({
+                sessionId: data.id
+            });
+
+        };
+
+    </script>
+
+</body>
+</html>
