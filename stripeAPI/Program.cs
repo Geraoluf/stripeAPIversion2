@@ -1,31 +1,53 @@
 using Microsoft.EntityFrameworkCore;
 using Stripe;
 using stripeAPI.Data;
-
-StripeConfiguration.ApiKey = "sk_test_51SozweBGVLvLSIXthLPOpORMUsATAcxYBoFPObwOuPThkKP90Q13y37cM9M3rO7ffnqwENAGOkgXfZ6j3H1s57CA00Hzseaaux";
-
-
+using System.IO;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlite("Data Source=orders.db"));  //database sqlite
+// Stripe key fra Azure environment variable eller local development config
+var stripeKey =
+    builder.Configuration["STRIPE_SECRET_KEY"]
+    ?? builder.Configuration["Stripe:SecretKey"];
 
-// Add services to the container.
+// Stop app hvis key mangler (god sikkerhed)
+if (string.IsNullOrEmpty(stripeKey))
+{
+    throw new Exception("Stripe key missing");
+}
 
+StripeConfiguration.ApiKey = stripeKey;
+
+// Ensure Azure persistent storage folder exists
+var dataDir = builder.Environment.IsDevelopment()
+    ? Directory.GetCurrentDirectory()
+    : "D:\\home\\data";
+
+if (!Directory.Exists(dataDir))
+{
+    Directory.CreateDirectory(dataDir);
+}
+
+// SQLite database (local dev vs Azure)
+var dbPath = builder.Environment.IsDevelopment()
+    ? "Data Source=orders.db"
+    : "Data Source=D:\\home\\data\\orders.db";
+
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseSqlite(dbPath));
+
+// Add services
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+// Exception handler for production
+if (!app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseExceptionHandler("/error");
 }
 
+// Static files (HTML frontend)
 app.UseDefaultFiles();
 app.UseStaticFiles();
 
@@ -34,5 +56,12 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+
+// Ensure database gets created automatically
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    db.Database.EnsureCreated();
+}
 
 app.Run();

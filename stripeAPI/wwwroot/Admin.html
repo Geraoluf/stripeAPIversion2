@@ -1,0 +1,52 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin - Kunder</title>
+</head>
+<body>
+    <h1>Betalende kunder</h1>
+    <table border="1" id="customers">
+        <thead>
+            <tr>
+                <th>Email</th>
+                <th>Produkt</th>
+                <th>Beløb</th>
+                <th>Status</th>
+                <th>Oprettet</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <script>
+        const SECRET_KEY = "MinHemmeligeNøgle123"; // 🔒 Skift til samme som i controller
+
+        async function loadCustomers() {
+            const res = await fetch(`/api/admin/customers?key=${SECRET_KEY}`);
+            if(res.status === 401) {
+                alert("Adgang nægtet! Forkert nøgle.");
+                return;
+            }
+
+            const data = await res.json();
+
+            const tbody = document.querySelector("#customers tbody");
+            tbody.innerHTML = "";
+
+            data.forEach(kunde => {
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                    <td>${kunde.email}</td>
+                    <td>${kunde.productName}</td>
+                    <td>${kunde.amount}</td>
+                    <td>${kunde.status}</td>
+                    <td>${new Date(kunde.createdAt).toLocaleString()}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        loadCustomers();
+    </script>
+</body>
+</html>

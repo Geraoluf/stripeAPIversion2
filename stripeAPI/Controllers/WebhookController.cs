@@ -18,6 +18,7 @@ namespace stripeAPI.Controllers
         [HttpPost]
         public async Task<IActionResult> Handle()
         {
+            Console.WriteLine("WEBHOOK RAMT");
             var json = await new StreamReader(HttpContext.Request.Body).ReadToEndAsync();
             Event stripeEvent = EventUtility.ParseEvent(json);
 
