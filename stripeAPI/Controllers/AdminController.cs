@@ -11,20 +11,20 @@ namespace stripeAPI.Controllers
     {
 
         private readonly AppDbContext _db;
-        private const string SecretKey = "MinHemmeligeNøgle123"; // 🔒 Skift til noget svært at gætte
+        private const string SecretKey = "MinHemmeligeNøgle123"; 
 
         public AdminController(AppDbContext db)
         {
             _db = db;
         }
 
-        // GET: /api/admin/customers?key=HemmeligeNøgle
+        
         [HttpGet("customers")]
         public async Task<IActionResult> GetCustomers([FromQuery] string key)
         {
             if (key != SecretKey)
             {
-                return Unauthorized("Forkert nøgle!"); // 🔴 Hvis nøglen ikke passer
+                return Unauthorized("Forkert nøgle!"); 
             }
 
             var kunder = await _db.CustomerOrders.ToListAsync();
