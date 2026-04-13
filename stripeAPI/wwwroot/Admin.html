@@ -19,7 +19,7 @@
     </table>
 
     <script>
-        const SECRET_KEY = "MinHemmeligeNøgle123"; // 🔒 Skift til samme som i controller
+        const SECRET_KEY = "MinHemmeligeNøgle123"; 
 
         async function loadCustomers() {
             const res = await fetch(`/api/admin/customers?key=${SECRET_KEY}`);
