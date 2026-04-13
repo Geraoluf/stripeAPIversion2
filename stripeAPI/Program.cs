@@ -58,15 +58,15 @@ app.UseAuthorization();
 
 app.MapGet("/", () => Results.Redirect("/Home/Index"));
 
-// 🌐 MVC routes
+
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
-// 🔌 API routes
+
 app.MapControllers();
 
-// 🗄️ Ensure database exists
+
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
