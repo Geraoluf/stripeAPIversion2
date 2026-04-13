@@ -44,8 +44,8 @@ namespace stripeAPI.Controllers
                
                 Mode = "payment",
 
-                SuccessUrl = "https://portfoliegertrasmussen-a3gpe7fzdncch0ct.denmarkeast-01.azurewebsites.net/success.html",
-                CancelUrl = "https://portfoliegertrasmussen-a3gpe7fzdncch0ct.denmarkeast-01.azurewebsites.net/cancel.html"
+                SuccessUrl = "https://apiversion4-fthsdbbcc0ggdydb.denmarkeast-01.azurewebsites.net/Success/Success",
+                CancelUrl = "https://apiversion4-fthsdbbcc0ggdydb.denmarkeast-01.azurewebsites.net/Success/Cancel"
             };
 
           
